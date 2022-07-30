@@ -685,6 +685,9 @@ public:
     /// if CAD was requested and the CAD timeout timed out before clear channel was detected.
     virtual bool    send(const uint8_t* data, uint8_t len);
 
+    bool prepareToTx(const uint8_t* data, uint8_t len);
+    bool transmit();
+
     /// Sets the length of the preamble
     /// in bytes. 
     /// Caution: this should be set to the same 

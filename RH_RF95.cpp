@@ -356,6 +356,42 @@ bool RH_RF95::send(const uint8_t* data, uint8_t len)
     return true;
 }
 
+bool RH_RF95::prepareToTx(const uint8_t* data, uint8_t len)
+{
+    if (len > RH_RF95_MAX_MESSAGE_LEN)
+	return false;
+
+    //waitPacketSent(); // Make sure we dont interrupt an outgoing message
+    setModeIdle();
+
+    //if (!waitCAD()) 
+	//return false;  // Check channel activity
+
+    // Position at the beginning of the FIFO
+    spiWrite(RH_RF95_REG_0D_FIFO_ADDR_PTR, 0);
+    // The headers
+    spiWrite(RH_RF95_REG_00_FIFO, _txHeaderTo);
+    spiWrite(RH_RF95_REG_00_FIFO, _txHeaderFrom);
+    spiWrite(RH_RF95_REG_00_FIFO, _txHeaderId);
+    spiWrite(RH_RF95_REG_00_FIFO, _txHeaderFlags);
+    // The message data
+    spiBurstWrite(RH_RF95_REG_00_FIFO, data, len);
+    spiWrite(RH_RF95_REG_22_PAYLOAD_LENGTH, len + RH_RF95_HEADER_LEN);
+       
+    return true;
+}
+
+bool RH_RF95::transmit()
+{  
+    RH_MUTEX_LOCK(lock); // Multithreading support
+    setModeTx(); // Start the transmitter
+    RH_MUTEX_UNLOCK(lock);
+    
+    // when Tx is done, interruptHandler will fire and radio mode will return to STANDBY
+    return true;
+}
+
+
 bool RH_RF95::printRegisters()
 {
 #ifdef RH_HAVE_SERIAL
