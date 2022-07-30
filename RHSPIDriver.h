@@ -43,6 +43,8 @@ public:
     /// during SPI communications with the SPI device that uis iused by this Driver.
     /// \param[in] spi Reference to the SPI interface to use. The default is to use a default built-in Hardware interface.
     RHSPIDriver(uint8_t slaveSelectPin = SS, RHGenericSPI& spi = hardware_spi);
+
+    void setSPIFrequency(RHGenericSPI::Frequency frequency);
     
     /// Initialise the Driver transport hardware and software.
     /// Make sure the Driver is properly configured before calling init().

@@ -14,6 +14,11 @@ RHSPIDriver::RHSPIDriver(uint8_t slaveSelectPin, RHGenericSPI& spi)
 {
 }
 
+void RHSPIDriver::setSPIFrequency(RHGenericSPI::Frequency frequency)
+{
+_spi.setFrequency(frequency);
+}
+
 bool RHSPIDriver::init()
 {
     // start the SPI library with the default speeds etc:
